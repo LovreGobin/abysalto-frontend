@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import axios from 'axios'
 import { createOrder } from '../services/api'
 import { PaymentMethod } from '../types/order'
 import type { CreateOrderDto, CreateOrderItem } from '../types/order'
@@ -45,7 +46,11 @@ function CreateOrder({ onOrderCreated }: Props) {
         try {
             setLoading(true)
             setError(null)
-            await createOrder(form)
+            const orderToSubmit = {
+                ...form,
+                currency: form.currency.trim() || 'EUR'
+            }
+            await createOrder(orderToSubmit)
             onOrderCreated()
             setForm({
                 customerName: '',
@@ -56,8 +61,16 @@ function CreateOrder({ onOrderCreated }: Props) {
                 currency: 'EUR',
                 items: [{ name: '', quantity: 1, price: 0 }]
             })
-        } catch (err) {
-            setError('Failed to create order. Please check your inputs.')
+        } catch (err: unknown) {
+            if (axios.isAxiosError(err) && err.response?.data?.errors) {
+                const errors = err.response.data.errors
+                const messages = Object.values(errors).flat().join(', ')
+                setError(messages as string)
+            } else if (axios.isAxiosError(err) && err.response?.data) {
+                setError(JSON.stringify(err.response.data))
+            } else {
+                setError('Failed to create order. Please check your inputs.')
+            }
         } finally {
             setLoading(false)
         }
@@ -99,7 +112,7 @@ function CreateOrder({ onOrderCreated }: Props) {
 
                 <div className="form-group">
                     <label>Currency</label>
-                    <input name="currency" value={form.currency} onChange={handleChange} />
+                    <input name="currency" value={form.currency} onChange={handleChange} placeholder="EUR" />
                 </div>
 
                 <h3>Items</h3>
