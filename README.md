@@ -13,10 +13,7 @@ A React + TypeScript frontend for the Restaurant Order Management System.
 
 - [Node.js](https://nodejs.org/) (v18 or higher)
 - [npm](https://www.npmjs.com/)
-- Backend API running (see [backend repository](https://github.com/YOUR_USERNAME/YOUR_BACKEND_REPO))
-
-## Related Repositories
-- [Backend Repo](https://github.com/LovreGobin/AbySalto_junior)
+- Backend API running (see [Backend Repo](https://github.com/LovreGobin/AbySalto_junior))
 
 ## Getting Started
 
